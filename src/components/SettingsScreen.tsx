@@ -5,9 +5,10 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const SettingsScreen = () => {
-  const [theme, setTheme] = useState('system');
+  const { theme, setTheme } = useTheme();
   const [fontSize, setFontSize] = useState('medium');
   const [hapticFeedback, setHapticFeedback] = useState(true);
 

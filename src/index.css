@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -88,6 +82,38 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .custom {
+    --background: 280 100% 98%;
+    --foreground: 280 100% 10%;
+
+    --card: 280 50% 96%;
+    --card-foreground: 280 100% 10%;
+
+    --popover: 280 100% 98%;
+    --popover-foreground: 280 100% 10%;
+
+    --primary: 280 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 30% 90%;
+    --secondary-foreground: 280 100% 15%;
+
+    --muted: 280 30% 90%;
+    --muted-foreground: 280 20% 40%;
+
+    --accent: 280 50% 85%;
+    --accent-foreground: 280 100% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 280 30% 85%;
+    --input: 280 30% 85%;
+    --ring: 280 100% 50%;
+
+    --radius: 0.5rem;
+  }
 }
 
 @layer base {
@@ -96,6 +122,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
   }
 }
