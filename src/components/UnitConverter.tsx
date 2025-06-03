@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CategoryList from './CategoryList';
@@ -12,7 +11,6 @@ const UnitConverter = () => {
   const [toUnit, setToUnit] = useState('foot');
   const [fromValue, setFromValue] = useState('1');
   const [toValue, setToValue] = useState('3.28084');
-  const [searchTerm, setSearchTerm] = useState('');
 
   const currentCategory = unitCategories[activeCategory];
 
@@ -67,25 +65,29 @@ const UnitConverter = () => {
     }
   };
 
-  const filteredCategories = Object.entries(unitCategories).filter(([id, category]) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
       <div className="bg-white px-6 py-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">Unit Converter</h2>
         
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <Input
-            placeholder="Search categories..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-gray-50 border-gray-200 focus:border-blue-300"
-          />
+        {/* Category Dropdown */}
+        <div className="w-full">
+          <Select value={activeCategory} onValueChange={handleCategoryChange}>
+            <SelectTrigger className="w-full bg-gray-50 border-gray-200 focus:border-blue-300">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+              {Object.entries(unitCategories).map(([id, category]) => (
+                <SelectItem key={id} value={id} className="hover:bg-gray-100">
+                  <div className="flex items-center gap-2">
+                    <span>{category.icon}</span>
+                    <span>{category.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -118,7 +120,7 @@ const UnitConverter = () => {
                   <SelectTrigger className="text-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
                     {Object.entries(currentCategory.units).map(([key, unit]) => (
                       <SelectItem key={key} value={key}>
                         {unit.name}
@@ -148,7 +150,7 @@ const UnitConverter = () => {
                   <SelectTrigger className="text-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
                     {Object.entries(currentCategory.units).map(([key, unit]) => (
                       <SelectItem key={key} value={key}>
                         {unit.name}
@@ -165,7 +167,7 @@ const UnitConverter = () => {
       {/* Categories List */}
       <div className="flex-1 overflow-hidden">
         <CategoryList
-          categories={filteredCategories}
+          categories={Object.entries(unitCategories)}
           activeCategory={activeCategory}
           onCategorySelect={handleCategoryChange}
         />

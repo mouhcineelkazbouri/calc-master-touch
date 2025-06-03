@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Monitor, Type, Vibrate, Crown, Moon, Sun, Smartphone } from 'lucide-react';
+import { Monitor, Type, Vibrate } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -120,44 +120,6 @@ const SettingsScreen = () => {
               />
             </div>
           </SettingCard>
-
-          {/* Upgrade to Pro */}
-          <Card className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-lg font-semibold text-amber-800">
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <Crown className="w-5 h-5 text-amber-600" />
-                </div>
-                Go Pro
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-amber-700 mb-4 text-sm">
-                Unlock premium features including advanced calculations, unlimited conversions, and ad-free experience.
-              </p>
-              <ul className="space-y-2 mb-6 text-sm text-amber-700">
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                  Advanced scientific functions
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                  Unlimited unit conversions
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                  Real-time crypto rates
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                  No advertisements
-                </li>
-              </ul>
-              <button className="w-full bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors shadow-lg">
-                Upgrade to Pro - $4.99/month
-              </button>
-            </CardContent>
-          </Card>
 
           {/* App Info */}
           <div className="text-center text-sm text-gray-500 pt-4">
