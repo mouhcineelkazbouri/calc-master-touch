@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Monitor, Type, Vibrate } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
@@ -6,11 +5,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from '@/contexts/ThemeContext';
+import ThemeCustomizer from './ThemeCustomizer';
 
 const SettingsScreen = () => {
   const { theme, setTheme } = useTheme();
   const [fontSize, setFontSize] = useState('medium');
   const [hapticFeedback, setHapticFeedback] = useState(true);
+  const [showCustomizer, setShowCustomizer] = useState(false);
+
+  const handleThemeChange = (value: string) => {
+    setTheme(value as any);
+    if (value === 'custom') {
+      setShowCustomizer(true);
+    }
+  };
 
   const SettingCard = ({ icon: Icon, title, children }: { icon: any, title: string, children: React.ReactNode }) => (
     <Card className="border-gray-200 shadow-sm">
@@ -50,7 +58,7 @@ const SettingsScreen = () => {
         <div className="space-y-6">
           {/* Theme Settings */}
           <SettingCard icon={Monitor} title="Appearance">
-            <RadioGroup value={theme} onValueChange={setTheme} className="space-y-1">
+            <RadioGroup value={theme} onValueChange={handleThemeChange} className="space-y-1">
               <RadioOption 
                 value="light" 
                 id="light" 
@@ -129,6 +137,11 @@ const SettingsScreen = () => {
           </div>
         </div>
       </div>
+
+      <ThemeCustomizer 
+        open={showCustomizer} 
+        onClose={() => setShowCustomizer(false)} 
+      />
     </div>
   );
 };
