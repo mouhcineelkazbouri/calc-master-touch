@@ -1,8 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { History } from 'lucide-react';
 import { basicCalculate, performScientificOperation } from '../utils/calculatorUtils';
+import { getRealtimePreview, formatLargeNumber, parseComplexNumber } from '../utils/enhancedCalculatorUtils';
 import ScientificButton from './ScientificButton';
-import CalculatorDisplay from './CalculatorDisplay';
+import EnhancedCalculatorDisplay from './EnhancedCalculatorDisplay';
+import CalculatorHistory, { HistoryItem } from './CalculatorHistory';
+import { toast } from 'sonner';
 
 const ScientificCalculator = () => {
   const [display, setDisplay] = useState('0');
@@ -10,6 +13,21 @@ const ScientificCalculator = () => {
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Get real-time preview
+  const preview = getRealtimePreview(expression);
+
+  const addToHistory = useCallback((expr: string, result: string) => {
+    const newItem: HistoryItem = {
+      id: Date.now().toString(),
+      expression: expr,
+      result: result,
+      timestamp: new Date()
+    };
+    setHistory(prev => [...prev, newItem].slice(-50));
+  }, []);
 
   const inputNumber = (num: string) => {
     if (waitingForNewValue) {
@@ -52,9 +70,10 @@ const ScientificCalculator = () => {
     } else if (operation && !waitingForNewValue) {
       const currentValue = previousValue || 0;
       const newValue = basicCalculate(currentValue, inputValue, operation);
-      setDisplay(String(newValue));
+      const formattedValue = formatLargeNumber(newValue);
+      setDisplay(formattedValue);
       setPreviousValue(newValue);
-      setExpression(String(newValue) + ' ' + nextOperation + ' ');
+      setExpression(formattedValue + ' ' + nextOperation + ' ');
     } else {
       const parts = expression.trim().split(' ');
       if (parts.length >= 2) {
@@ -72,8 +91,12 @@ const ScientificCalculator = () => {
 
     if (previousValue !== null && operation) {
       const newValue = basicCalculate(previousValue, inputValue, operation);
-      setDisplay(String(newValue));
-      setExpression(expression + ' = ' + String(newValue));
+      const formattedValue = formatLargeNumber(newValue);
+      const fullExpression = expression + ' = ' + formattedValue;
+      
+      setDisplay(formattedValue);
+      setExpression(fullExpression);
+      addToHistory(expression, formattedValue);
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
@@ -83,9 +106,12 @@ const ScientificCalculator = () => {
   const scientificOperation = (op: string) => {
     const value = parseFloat(display);
     const { result, operationText } = performScientificOperation(op, value);
+    const formattedResult = formatLargeNumber(result);
 
-    setDisplay(String(result));
-    setExpression(operationText + ' = ' + String(result));
+    setDisplay(formattedResult);
+    const fullExpression = operationText + ' = ' + formattedResult;
+    setExpression(fullExpression);
+    addToHistory(operationText, formattedResult);
     setWaitingForNewValue(true);
   };
 
@@ -114,11 +140,52 @@ const ScientificCalculator = () => {
     }
   };
 
+  const handlePaste = (value: string) => {
+    const num = parseComplexNumber(value);
+    if (num !== null) {
+      const formattedValue = formatLargeNumber(num);
+      setDisplay(formattedValue);
+      if (waitingForNewValue || display === '0') {
+        setExpression(expression + formattedValue);
+      } else {
+        setExpression(expression + formattedValue);
+      }
+      setWaitingForNewValue(false);
+    }
+  };
+
+  const handleUseHistoryResult = (result: string) => {
+    setDisplay(result);
+    setExpression(result);
+    setWaitingForNewValue(false);
+    setShowHistory(false);
+    toast.success('Result applied');
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    toast.success('History cleared');
+  };
+
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Scientific Calculator</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Scientific Calculator</h2>
+        <button
+          onClick={() => setShowHistory(true)}
+          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+          title="View history"
+        >
+          <History size={20} />
+        </button>
+      </div>
       
-      <CalculatorDisplay expression={expression} display={display} />
+      <EnhancedCalculatorDisplay 
+        expression={expression} 
+        display={display} 
+        preview={preview}
+        onPaste={handlePaste}
+      />
 
       {/* Scientific Functions Row 1 */}
       <div className="grid grid-cols-5 gap-2 mb-3">
@@ -166,6 +233,15 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-14" />
         <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
       </div>
+
+      {showHistory && (
+        <CalculatorHistory
+          history={history}
+          onUseResult={handleUseHistoryResult}
+          onClearHistory={clearHistory}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
     </div>
   );
 };

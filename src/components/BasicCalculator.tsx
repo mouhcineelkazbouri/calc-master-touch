@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+
+import React, { useState, useCallback } from 'react';
+import { History } from 'lucide-react';
+import EnhancedCalculatorDisplay from './EnhancedCalculatorDisplay';
+import CalculatorHistory, { HistoryItem } from './CalculatorHistory';
+import { getRealtimePreview, formatLargeNumber, parseComplexNumber } from '../utils/enhancedCalculatorUtils';
+import { toast } from 'sonner';
 
 const BasicCalculator = () => {
   const [display, setDisplay] = useState('0');
@@ -6,6 +12,21 @@ const BasicCalculator = () => {
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Get real-time preview
+  const preview = getRealtimePreview(expression);
+
+  const addToHistory = useCallback((expr: string, result: string) => {
+    const newItem: HistoryItem = {
+      id: Date.now().toString(),
+      expression: expr,
+      result: result,
+      timestamp: new Date()
+    };
+    setHistory(prev => [...prev, newItem].slice(-50)); // Keep last 50 calculations
+  }, []);
 
   const handleNumber = (num: string) => {
     if (waitingForNewValue) {
@@ -18,7 +39,6 @@ const BasicCalculator = () => {
       if (expression === '') {
         setExpression(num);
       } else if (!waitingForNewValue) {
-        // Only append if we're continuing to type the same number
         const lastChar = expression[expression.length - 1];
         if (!isNaN(Number(lastChar)) || lastChar === '.') {
           setExpression(expression + num);
@@ -38,11 +58,11 @@ const BasicCalculator = () => {
     } else if (operation && !waitingForNewValue) {
       const currentValue = previousValue || 0;
       const newValue = calculate(currentValue, inputValue, operation);
-      setDisplay(String(newValue));
+      const formattedValue = formatLargeNumber(newValue);
+      setDisplay(formattedValue);
       setPreviousValue(newValue);
-      setExpression(String(newValue) + ' ' + nextOperation + ' ');
+      setExpression(formattedValue + ' ' + nextOperation + ' ');
     } else {
-      // Replace the last operation
       const parts = expression.trim().split(' ');
       if (parts.length >= 2) {
         parts[parts.length - 2] = nextOperation;
@@ -74,8 +94,12 @@ const BasicCalculator = () => {
 
     if (previousValue !== null && operation) {
       const newValue = calculate(previousValue, inputValue, operation);
-      setDisplay(String(newValue));
-      setExpression(expression + ' = ' + String(newValue));
+      const formattedValue = formatLargeNumber(newValue);
+      const fullExpression = expression + ' = ' + formattedValue;
+      
+      setDisplay(formattedValue);
+      setExpression(fullExpression);
+      addToHistory(expression, formattedValue);
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
@@ -93,7 +117,6 @@ const BasicCalculator = () => {
   const toggleSign = () => {
     const newDisplay = display.charAt(0) === '-' ? display.slice(1) : '-' + display;
     setDisplay(newDisplay);
-    // Update expression to reflect the sign change
     if (expression) {
       const parts = expression.split(' ');
       if (parts.length > 0) {
@@ -111,16 +134,16 @@ const BasicCalculator = () => {
   const handlePercent = () => {
     const value = parseFloat(display);
     const newValue = value / 100;
-    setDisplay(String(newValue));
-    // Update expression
+    const formattedValue = formatLargeNumber(newValue);
+    setDisplay(formattedValue);
     if (expression) {
       const parts = expression.split(' ');
       if (parts.length > 0) {
-        parts[parts.length - 1] = String(newValue);
+        parts[parts.length - 1] = formattedValue;
         setExpression(parts.join(' '));
       }
     } else {
-      setExpression(String(newValue));
+      setExpression(formattedValue);
     }
   };
 
@@ -135,18 +158,52 @@ const BasicCalculator = () => {
     }
   };
 
+  const handlePaste = (value: string) => {
+    const num = parseComplexNumber(value);
+    if (num !== null) {
+      const formattedValue = formatLargeNumber(num);
+      setDisplay(formattedValue);
+      if (waitingForNewValue || display === '0') {
+        setExpression(expression + formattedValue);
+      } else {
+        setExpression(expression + formattedValue);
+      }
+      setWaitingForNewValue(false);
+    }
+  };
+
+  const handleUseHistoryResult = (result: string) => {
+    setDisplay(result);
+    setExpression(result);
+    setWaitingForNewValue(false);
+    setShowHistory(false);
+    toast.success('Result applied');
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    toast.success('History cleared');
+  };
+
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">Basic Calculator</h2>
-      
-      <div className="bg-gray-50 rounded-2xl p-6 mb-6">
-        {/* Expression display */}
-        <div className="text-right text-sm text-gray-500 mb-2 min-h-[20px]">
-          {expression || '\u00A0'}
-        </div>
-        {/* Main display */}
-        <div className="text-right text-3xl font-light text-gray-800">{display}</div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">Basic Calculator</h2>
+        <button
+          onClick={() => setShowHistory(true)}
+          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+          title="View history"
+        >
+          <History size={20} />
+        </button>
       </div>
+      
+      <EnhancedCalculatorDisplay 
+        expression={expression} 
+        display={display} 
+        preview={preview}
+        onPaste={handlePaste}
+      />
 
       <div className="grid grid-cols-4 gap-3">
         <button onClick={clear} className="bg-gray-200 rounded-2xl h-16 text-lg font-medium">AC</button>
@@ -173,6 +230,15 @@ const BasicCalculator = () => {
         <button onClick={handleDecimal} className="bg-gray-100 rounded-2xl h-16 text-lg font-medium">.</button>
         <button onClick={handleEquals} className="bg-orange-500 text-white rounded-2xl h-16 text-lg font-medium">=</button>
       </div>
+
+      {showHistory && (
+        <CalculatorHistory
+          history={history}
+          onUseResult={handleUseHistoryResult}
+          onClearHistory={clearHistory}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
     </div>
   );
 };
