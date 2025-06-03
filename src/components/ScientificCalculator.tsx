@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const ScientificCalculator = () => {
@@ -126,9 +125,9 @@ const ScientificCalculator = () => {
     setDisplay(display.charAt(0) === '-' ? display.slice(1) : '-' + display);
   };
 
-  const ScientificButton = ({ onPress, title, backgroundColor = 'bg-gray-100', textColor = 'text-gray-800', size = 'h-12' }: any) => (
+  const ScientificButton = ({ onPress, title, backgroundColor = 'bg-gray-100', textColor = 'text-gray-800', size = 'h-10' }: any) => (
     <button
-      className={`${size} ${backgroundColor} ${textColor} rounded-xl font-medium text-sm shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 hover:brightness-105`}
+      className={`${size} ${backgroundColor} ${textColor} rounded-xl font-medium text-xs shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 hover:brightness-105 flex items-center justify-center`}
       onClick={onPress}
     >
       {title}
@@ -136,16 +135,14 @@ const ScientificCalculator = () => {
   );
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Scientific Calculator</h2>
-      
+    <div className="h-full flex flex-col p-3">
       {/* Display */}
-      <div className="bg-gray-50 rounded-2xl p-4 mb-4">
-        <div className="text-right text-2xl font-light text-gray-800 break-all">{display}</div>
+      <div className="bg-gray-50 rounded-2xl p-3 mb-3 h-16 flex items-center justify-end">
+        <div className="text-right text-xl font-light text-gray-800 break-all truncate">{display}</div>
       </div>
 
       {/* Scientific Functions Row 1 */}
-      <div className="grid grid-cols-5 gap-2 mb-3">
+      <div className="grid grid-cols-5 gap-2 mb-2 h-10">
         <ScientificButton onPress={() => scientificOperation('sin')} title="sin" backgroundColor="bg-orange-100" textColor="text-orange-700" />
         <ScientificButton onPress={() => scientificOperation('cos')} title="cos" backgroundColor="bg-orange-100" textColor="text-orange-700" />
         <ScientificButton onPress={() => scientificOperation('tan')} title="tan" backgroundColor="bg-orange-100" textColor="text-orange-700" />
@@ -154,7 +151,7 @@ const ScientificCalculator = () => {
       </div>
 
       {/* Scientific Functions Row 2 */}
-      <div className="grid grid-cols-5 gap-2 mb-3">
+      <div className="grid grid-cols-5 gap-2 mb-2 h-10">
         <ScientificButton onPress={() => scientificOperation('π')} title="π" backgroundColor="bg-blue-100" textColor="text-blue-700" />
         <ScientificButton onPress={() => scientificOperation('e')} title="e" backgroundColor="bg-blue-100" textColor="text-blue-700" />
         <ScientificButton onPress={() => scientificOperation('x²')} title="x²" backgroundColor="bg-blue-100" textColor="text-blue-700" />
@@ -163,7 +160,7 @@ const ScientificCalculator = () => {
       </div>
 
       {/* Scientific Functions Row 3 */}
-      <div className="grid grid-cols-5 gap-2 mb-4">
+      <div className="grid grid-cols-5 gap-2 mb-3 h-10">
         <ScientificButton onPress={() => inputNumber('(')} title="(" backgroundColor="bg-gray-200" />
         <ScientificButton onPress={() => inputNumber(')')} title=")" backgroundColor="bg-gray-200" />
         <ScientificButton onPress={() => scientificOperation('x!')} title="x!" backgroundColor="bg-blue-100" textColor="text-blue-700" />
@@ -171,27 +168,27 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={toggleSign} title="±" backgroundColor="bg-gray-200" />
       </div>
 
-      {/* Basic Calculator Buttons */}
-      <div className="grid grid-cols-4 gap-3">
-        <ScientificButton onPress={() => inputNumber('7')} title="7" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('8')} title="8" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('9')} title="9" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('÷')} title="÷" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+      {/* Basic Calculator Buttons - Remaining height */}
+      <div className="flex-1 grid grid-cols-4 gap-2">
+        <ScientificButton onPress={() => inputNumber('7')} title="7" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('8')} title="8" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('9')} title="9" size="h-full" />
+        <ScientificButton onPress={() => inputOperation('÷')} title="÷" backgroundColor="bg-blue-500" textColor="text-white" size="h-full" />
 
-        <ScientificButton onPress={() => inputNumber('4')} title="4" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('5')} title="5" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('6')} title="6" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('×')} title="×" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+        <ScientificButton onPress={() => inputNumber('4')} title="4" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('5')} title="5" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('6')} title="6" size="h-full" />
+        <ScientificButton onPress={() => inputOperation('×')} title="×" backgroundColor="bg-blue-500" textColor="text-white" size="h-full" />
 
-        <ScientificButton onPress={() => inputNumber('1')} title="1" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('2')} title="2" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('3')} title="3" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('−')} title="−" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+        <ScientificButton onPress={() => inputNumber('1')} title="1" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('2')} title="2" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('3')} title="3" size="h-full" />
+        <ScientificButton onPress={() => inputOperation('−')} title="−" backgroundColor="bg-blue-500" textColor="text-white" size="h-full" />
 
-        <ScientificButton onPress={() => inputNumber('0')} title="0" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('.')} title="." size="h-14" />
-        <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+        <ScientificButton onPress={() => inputNumber('0')} title="0" size="h-full" />
+        <ScientificButton onPress={() => inputNumber('.')} title="." size="h-full" />
+        <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-full" />
+        <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-full" />
       </div>
     </div>
   );

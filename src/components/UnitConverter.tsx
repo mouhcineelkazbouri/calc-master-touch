@@ -65,18 +65,18 @@ const UnitConverter = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      {/* Header */}
-      <div className="bg-white px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">Unit Converter</h2>
+    <div className="h-full flex flex-col bg-gray-50">
+      {/* Header - Fixed height */}
+      <div className="bg-white px-4 py-3 border-b border-gray-200 flex-shrink-0">
+        <h2 className="text-lg font-semibold text-gray-800 text-center mb-3">Unit Converter</h2>
         
         {/* Category Dropdown */}
         <div className="w-full">
           <Select value={activeCategory} onValueChange={handleCategoryChange}>
-            <SelectTrigger className="w-full bg-gray-50 border-gray-200 focus:border-blue-300">
+            <SelectTrigger className="w-full bg-gray-50 border-gray-200 focus:border-blue-300 h-10">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-48 overflow-y-auto">
               {Object.entries(unitCategories).map(([id, category]) => (
                 <SelectItem key={id} value={id} className="hover:bg-gray-100">
                   <div className="flex items-center gap-2">
@@ -90,17 +90,17 @@ const UnitConverter = () => {
         </div>
       </div>
 
-      {/* Current Category */}
-      <div className="bg-white px-6 py-4 border-b border-gray-200">
+      {/* Current Category - Fixed height */}
+      <div className="bg-white px-4 py-3 border-b border-gray-200 flex-shrink-0">
         <div className="text-center">
-          <div className="text-2xl mb-2">{currentCategory.icon}</div>
-          <h3 className="text-lg font-medium text-gray-700">{currentCategory.name}</h3>
+          <div className="text-xl mb-1">{currentCategory.icon}</div>
+          <h3 className="text-sm font-medium text-gray-700">{currentCategory.name}</h3>
         </div>
       </div>
 
-      {/* Conversion Section */}
-      <div className="bg-white px-6 py-6">
-        <div className="space-y-4">
+      {/* Conversion Section - Remaining height */}
+      <div className="bg-white px-4 py-4 flex-1 overflow-hidden">
+        <div className="h-full flex flex-col justify-center space-y-6">
           {/* From Section */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-600">From</label>
@@ -110,16 +110,16 @@ const UnitConverter = () => {
                   type="number"
                   value={fromValue}
                   onChange={(e) => handleFromValueChange(e.target.value)}
-                  className="text-lg font-medium"
+                  className="text-lg font-medium h-12"
                   placeholder="Enter value"
                 />
               </div>
-              <div className="w-32">
+              <div className="w-28">
                 <Select value={fromUnit} onValueChange={handleFromUnitChange}>
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm h-12">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-40 overflow-y-auto">
                     {Object.entries(currentCategory.units).map(([key, unit]) => (
                       <SelectItem key={key} value={key}>
                         {unit.name}
@@ -140,16 +140,16 @@ const UnitConverter = () => {
                   type="number"
                   value={toValue}
                   onChange={(e) => handleToValueChange(e.target.value)}
-                  className="text-lg font-medium bg-blue-50 border-blue-200"
+                  className="text-lg font-medium bg-blue-50 border-blue-200 h-12"
                   placeholder="Result"
                 />
               </div>
-              <div className="w-32">
+              <div className="w-28">
                 <Select value={toUnit} onValueChange={handleToUnitChange}>
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm h-12">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-40 overflow-y-auto">
                     {Object.entries(currentCategory.units).map(([key, unit]) => (
                       <SelectItem key={key} value={key}>
                         {unit.name}
