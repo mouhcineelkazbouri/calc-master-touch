@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 
 const BasicCalculator = () => {
   const [display, setDisplay] = useState('0');
+  const [expression, setExpression] = useState('');
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
@@ -10,9 +10,22 @@ const BasicCalculator = () => {
   const handleNumber = (num: string) => {
     if (waitingForNewValue) {
       setDisplay(num);
+      setExpression(expression + num);
       setWaitingForNewValue(false);
     } else {
-      setDisplay(display === '0' ? num : display + num);
+      const newDisplay = display === '0' ? num : display + num;
+      setDisplay(newDisplay);
+      if (expression === '') {
+        setExpression(num);
+      } else if (!waitingForNewValue) {
+        // Only append if we're continuing to type the same number
+        const lastChar = expression[expression.length - 1];
+        if (!isNaN(Number(lastChar)) || lastChar === '.') {
+          setExpression(expression + num);
+        } else {
+          setExpression(expression + num);
+        }
+      }
     }
   };
 
@@ -21,11 +34,20 @@ const BasicCalculator = () => {
 
     if (previousValue === null) {
       setPreviousValue(inputValue);
-    } else if (operation) {
+      setExpression(expression + ' ' + nextOperation + ' ');
+    } else if (operation && !waitingForNewValue) {
       const currentValue = previousValue || 0;
       const newValue = calculate(currentValue, inputValue, operation);
       setDisplay(String(newValue));
       setPreviousValue(newValue);
+      setExpression(String(newValue) + ' ' + nextOperation + ' ');
+    } else {
+      // Replace the last operation
+      const parts = expression.trim().split(' ');
+      if (parts.length >= 2) {
+        parts[parts.length - 2] = nextOperation;
+        setExpression(parts.join(' ') + ' ');
+      }
     }
 
     setWaitingForNewValue(true);
@@ -53,6 +75,7 @@ const BasicCalculator = () => {
     if (previousValue !== null && operation) {
       const newValue = calculate(previousValue, inputValue, operation);
       setDisplay(String(newValue));
+      setExpression(expression + ' = ' + String(newValue));
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
@@ -61,26 +84,54 @@ const BasicCalculator = () => {
 
   const clear = () => {
     setDisplay('0');
+    setExpression('');
     setPreviousValue(null);
     setOperation(null);
     setWaitingForNewValue(false);
   };
 
   const toggleSign = () => {
-    setDisplay(display.charAt(0) === '-' ? display.slice(1) : '-' + display);
+    const newDisplay = display.charAt(0) === '-' ? display.slice(1) : '-' + display;
+    setDisplay(newDisplay);
+    // Update expression to reflect the sign change
+    if (expression) {
+      const parts = expression.split(' ');
+      if (parts.length > 0) {
+        const lastPart = parts[parts.length - 1];
+        if (!isNaN(Number(lastPart))) {
+          parts[parts.length - 1] = newDisplay;
+          setExpression(parts.join(' '));
+        }
+      }
+    } else {
+      setExpression(newDisplay);
+    }
   };
 
   const handlePercent = () => {
     const value = parseFloat(display);
-    setDisplay(String(value / 100));
+    const newValue = value / 100;
+    setDisplay(String(newValue));
+    // Update expression
+    if (expression) {
+      const parts = expression.split(' ');
+      if (parts.length > 0) {
+        parts[parts.length - 1] = String(newValue);
+        setExpression(parts.join(' '));
+      }
+    } else {
+      setExpression(String(newValue));
+    }
   };
 
   const handleDecimal = () => {
     if (waitingForNewValue) {
       setDisplay('0.');
+      setExpression(expression + '0.');
       setWaitingForNewValue(false);
     } else if (display.indexOf('.') === -1) {
       setDisplay(display + '.');
+      setExpression(expression + '.');
     }
   };
 
@@ -89,6 +140,11 @@ const BasicCalculator = () => {
       <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">Basic Calculator</h2>
       
       <div className="bg-gray-50 rounded-2xl p-6 mb-6">
+        {/* Expression display */}
+        <div className="text-right text-sm text-gray-500 mb-2 min-h-[20px]">
+          {expression || '\u00A0'}
+        </div>
+        {/* Main display */}
         <div className="text-right text-3xl font-light text-gray-800">{display}</div>
       </div>
 
