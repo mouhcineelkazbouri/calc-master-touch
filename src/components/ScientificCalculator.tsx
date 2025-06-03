@@ -92,6 +92,16 @@ const ScientificCalculator = () => {
     }
   };
 
+  const factorial = (n: number): number => {
+    if (n < 0) return NaN;
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
+  };
+
   const scientificOperation = (op: string) => {
     const value = parseFloat(display);
     let result = 0;
@@ -151,16 +161,6 @@ const ScientificCalculator = () => {
     setWaitingForNewValue(true);
   };
 
-  const factorial = (n: number): number => {
-    if (n < 0) return NaN;
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-      result *= i;
-    }
-    return result;
-  };
-
   const clear = () => {
     setDisplay('0');
     setExpression('');
@@ -184,31 +184,6 @@ const ScientificCalculator = () => {
     } else {
       setExpression(newDisplay);
     }
-  };
-
-  const calculate = (firstValue: number, secondValue: number, operation: string) => {
-    switch (operation) {
-      case '+':
-        return firstValue + secondValue;
-      case '−':
-        return firstValue - secondValue;
-      case '×':
-        return firstValue * secondValue;
-      case '÷':
-        return secondValue !== 0 ? firstValue / secondValue : 0;
-      default:
-        return secondValue;
-    }
-  };
-
-  const factorial = (n: number): number => {
-    if (n < 0) return NaN;
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-      result *= i;
-    }
-    return result;
   };
 
   const ScientificButton = ({ onPress, title, backgroundColor = 'bg-gray-100', textColor = 'text-gray-800', size = 'h-12' }: any) => (
