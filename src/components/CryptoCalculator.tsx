@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -126,8 +127,8 @@ const CryptoCalculator = () => {
   };
 
   const Sparkline = ({ data, isPositive }: { data: number[], isPositive: boolean }) => {
-    const width = 50;
-    const height = 16;
+    const width = 60;
+    const height = 20;
     const min = Math.min(...data);
     const max = Math.max(...data);
     const range = max - min;
@@ -160,147 +161,142 @@ const CryptoCalculator = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      <div className="h-full flex flex-col p-4">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 text-center flex-shrink-0">Crypto Calculator</h2>
+    <div className="p-6 bg-white min-h-screen">
+      <div className="max-w-md mx-auto">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Crypto Calculator</h2>
         
-        {/* Conversion Cards - Scrollable area */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="space-y-3 mb-4">
-            {/* From Currency */}
-            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
-              <label className="text-xs font-medium text-gray-600 mb-2 block">From</label>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Select value={fromCurrency} onValueChange={setFromCurrency}>
-                    <SelectTrigger className="w-full h-10 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencies.map((currency) => (
-                        <SelectItem key={currency.id} value={currency.id}>
-                          {formatCurrency(currency.id)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    value={fromAmount}
-                    onChange={(e) => setFromAmount(e.target.value)}
-                    placeholder="Enter amount"
-                    className="text-right font-semibold h-10 text-sm"
-                  />
+        {/* Conversion Cards */}
+        <div className="space-y-4 mb-6">
+          {/* From Currency */}
+          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
+            <label className="text-sm font-medium text-gray-600 mb-2 block">From</label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Select value={fromCurrency} onValueChange={setFromCurrency}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.id} value={currency.id}>
+                        {formatCurrency(currency.id)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  value={fromAmount}
+                  onChange={(e) => setFromAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="text-right font-semibold"
+                />
+              </div>
+            </div>
+            {getCurrentPrice(fromCurrency) && (
+              <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                <span>${getCurrentPrice(fromCurrency).current_price.toLocaleString()}</span>
+                <div className="flex items-center gap-1">
+                  {getCurrentPrice(fromCurrency).price_change_percentage_24h > 0 ? (
+                    <TrendingUp className="w-3 h-3 text-green-500" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3 text-red-500" />
+                  )}
+                  <span className={getCurrentPrice(fromCurrency).price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'}>
+                    {getCurrentPrice(fromCurrency).price_change_percentage_24h.toFixed(2)}%
+                  </span>
+                  {getCurrentPrice(fromCurrency).sparkline_in_7d && (
+                    <Sparkline 
+                      data={getCurrentPrice(fromCurrency).sparkline_in_7d!.price} 
+                      isPositive={getCurrentPrice(fromCurrency).price_change_percentage_24h > 0}
+                    />
+                  )}
                 </div>
               </div>
-              {getCurrentPrice(fromCurrency) && (
-                <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                  <span>${getCurrentPrice(fromCurrency).current_price.toLocaleString()}</span>
-                  <div className="flex items-center gap-1">
-                    {getCurrentPrice(fromCurrency).price_change_percentage_24h > 0 ? (
-                      <TrendingUp className="w-3 h-3 text-green-500" />
-                    ) : (
-                      <TrendingDown className="w-3 h-3 text-red-500" />
-                    )}
-                    <span className={getCurrentPrice(fromCurrency).price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'}>
-                      {getCurrentPrice(fromCurrency).price_change_percentage_24h.toFixed(2)}%
-                    </span>
-                    {getCurrentPrice(fromCurrency).sparkline_in_7d && (
-                      <Sparkline 
-                        data={getCurrentPrice(fromCurrency).sparkline_in_7d!.price} 
-                        isPositive={getCurrentPrice(fromCurrency).price_change_percentage_24h > 0}
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
+          </div>
 
-            {/* Swap Button */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => {
-                  const temp = fromCurrency;
-                  setFromCurrency(toCurrency);
-                  setToCurrency(temp);
-                  setFromAmount(toAmount);
-                }}
-                className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-              </button>
-            </div>
+          {/* Swap Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={() => {
+                const temp = fromCurrency;
+                setFromCurrency(toCurrency);
+                setToCurrency(temp);
+                setFromAmount(toAmount);
+              }}
+              className="p-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
 
-            {/* To Currency */}
-            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
-              <label className="text-xs font-medium text-gray-600 mb-2 block">To</label>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Select value={toCurrency} onValueChange={setToCurrency}>
-                    <SelectTrigger className="w-full h-10 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencies.map((currency) => (
-                        <SelectItem key={currency.id} value={currency.id}>
-                          {formatCurrency(currency.id)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="text"
-                    value={toAmount}
-                    readOnly
-                    className="text-right font-bold text-green-600 bg-white h-10 text-sm"
-                  />
+          {/* To Currency */}
+          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
+            <label className="text-sm font-medium text-gray-600 mb-2 block">To</label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Select value={toCurrency} onValueChange={setToCurrency}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.id} value={currency.id}>
+                        {formatCurrency(currency.id)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  value={toAmount}
+                  readOnly
+                  className="text-right font-bold text-green-600 bg-white"
+                />
+              </div>
+            </div>
+            {getCurrentPrice(toCurrency) && (
+              <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                <span>${getCurrentPrice(toCurrency).current_price.toLocaleString()}</span>
+                <div className="flex items-center gap-1">
+                  {getCurrentPrice(toCurrency).price_change_percentage_24h > 0 ? (
+                    <TrendingUp className="w-3 h-3 text-green-500" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3 text-red-500" />
+                  )}
+                  <span className={getCurrentPrice(toCurrency).price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'}>
+                    {getCurrentPrice(toCurrency).price_change_percentage_24h.toFixed(2)}%
+                  </span>
+                  {getCurrentPrice(toCurrency).sparkline_in_7d && (
+                    <Sparkline 
+                      data={getCurrentPrice(toCurrency).sparkline_in_7d!.price} 
+                      isPositive={getCurrentPrice(toCurrency).price_change_percentage_24h > 0}
+                    />
+                  )}
                 </div>
               </div>
-              {getCurrentPrice(toCurrency) && (
-                <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                  <span>${getCurrentPrice(toCurrency).current_price.toLocaleString()}</span>
-                  <div className="flex items-center gap-1">
-                    {getCurrentPrice(toCurrency).price_change_percentage_24h > 0 ? (
-                      <TrendingUp className="w-3 h-3 text-green-500" />
-                    ) : (
-                      <TrendingDown className="w-3 h-3 text-red-500" />
-                    )}
-                    <span className={getCurrentPrice(toCurrency).price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'}>
-                      {getCurrentPrice(toCurrency).price_change_percentage_24h.toFixed(2)}%
-                    </span>
-                    {getCurrentPrice(toCurrency).sparkline_in_7d && (
-                      <Sparkline 
-                        data={getCurrentPrice(toCurrency).sparkline_in_7d!.price} 
-                        isPositive={getCurrentPrice(toCurrency).price_change_percentage_24h > 0}
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Footer - Fixed at bottom */}
-        <div className="flex-shrink-0">
-          {/* Refresh Button */}
-          <button
-            onClick={fetchCryptoPrices}
-            disabled={isLoading}
-            className="w-full bg-gray-900 text-white py-2 rounded-xl font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 mb-3 text-sm"
-          >
-            {isLoading ? 'Updating...' : 'Refresh Rates'}
-          </button>
+        {/* Refresh Button */}
+        <button
+          onClick={fetchCryptoPrices}
+          disabled={isLoading}
+          className="w-full bg-gray-900 text-white py-3 rounded-2xl font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 mb-4"
+        >
+          {isLoading ? 'Updating...' : 'Refresh Rates'}
+        </button>
 
-          {/* Footer */}
-          <div className="text-center text-xs text-gray-500">
-            <p>Last updated: {lastUpdate.toLocaleTimeString()}</p>
-            <p className="mt-1">Powered by CoinGecko</p>
-          </div>
+        {/* Footer */}
+        <div className="text-center text-xs text-gray-500">
+          <p>Last updated: {lastUpdate.toLocaleTimeString()}</p>
+          <p className="mt-1">Powered by CoinGecko</p>
         </div>
       </div>
     </div>
