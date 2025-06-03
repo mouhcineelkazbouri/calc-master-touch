@@ -53,26 +53,6 @@ const EnhancedCalculatorDisplay = ({
 
   return (
     <div className="bg-gray-50 rounded-2xl p-4 mb-4 relative">
-      {/* Copy and Paste buttons */}
-      <div className="absolute top-2 right-2 flex gap-1">
-        <button
-          onClick={handleCopy}
-          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-          title="Copy result"
-        >
-          <Copy size={14} />
-        </button>
-        {onPaste && (
-          <button
-            onClick={handlePaste}
-            className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-            title="Paste number"
-          >
-            <Clipboard size={14} />
-          </button>
-        )}
-      </div>
-
       {/* Expression display with horizontal scrolling */}
       <div 
         ref={expressionRef}
@@ -89,13 +69,35 @@ const EnhancedCalculatorDisplay = ({
         </div>
       )}
 
-      {/* Main display */}
-      <div 
-        ref={displayRef}
-        className="text-right text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {display}
+      {/* Main display with copy/paste buttons positioned to avoid overlap */}
+      <div className="relative">
+        <div 
+          ref={displayRef}
+          className="text-right text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap pr-20"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {display}
+        </div>
+        
+        {/* Copy and Paste buttons positioned at the right edge */}
+        <div className="absolute top-0 right-0 flex gap-1">
+          <button
+            onClick={handleCopy}
+            className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+            title="Copy result"
+          >
+            <Copy size={14} />
+          </button>
+          {onPaste && (
+            <button
+              onClick={handlePaste}
+              className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+              title="Paste number"
+            >
+              <Clipboard size={14} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
