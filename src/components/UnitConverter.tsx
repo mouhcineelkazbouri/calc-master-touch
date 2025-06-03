@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import CategoryList from './CategoryList';
 import { unitCategories, convertUnits } from '../utils/unitConversions';
 
 const UnitConverter = () => {
@@ -100,7 +99,7 @@ const UnitConverter = () => {
       </div>
 
       {/* Conversion Section */}
-      <div className="bg-white px-6 py-6 border-b border-gray-200">
+      <div className="bg-white px-6 py-6">
         <div className="space-y-4">
           {/* From Section */}
           <div className="space-y-2">
@@ -162,15 +161,6 @@ const UnitConverter = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Categories List */}
-      <div className="flex-1 overflow-hidden">
-        <CategoryList
-          categories={Object.entries(unitCategories)}
-          activeCategory={activeCategory}
-          onCategorySelect={handleCategoryChange}
-        />
       </div>
     </div>
   );
