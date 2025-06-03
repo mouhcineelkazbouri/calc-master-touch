@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { Calculator, BarChart3, Repeat, Bitcoin, Settings } from 'lucide-react';
+import UnitConverter from '../components/UnitConverter';
 
 const Index = () => {
   const [activeScreen, setActiveScreen] = useState('basic');
@@ -265,7 +267,7 @@ const Index = () => {
       case 'scientific':
         return <ScientificCalculator />;
       case 'converter':
-        return <OtherScreen title="Unit Converter" />;
+        return <UnitConverter />;
       case 'crypto':
         return <OtherScreen title="Crypto Calculator" />;
       case 'settings':
