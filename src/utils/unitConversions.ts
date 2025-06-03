@@ -1,5 +1,16 @@
 
-export const unitCategories = {
+interface Unit {
+  name: string;
+  factor: number;
+}
+
+interface Category {
+  name: string;
+  icon: string;
+  units: Record<string, Unit>;
+}
+
+export const unitCategories: Record<string, Category> = {
   length: {
     name: 'Length',
     icon: '📏',
@@ -87,7 +98,7 @@ export const unitCategories = {
 };
 
 export const convertUnits = (value: number, fromUnit: string, toUnit: string, category: string): number => {
-  const categoryData = unitCategories[category as keyof typeof unitCategories];
+  const categoryData = unitCategories[category];
   
   if (!categoryData) return value;
 
@@ -96,8 +107,13 @@ export const convertUnits = (value: number, fromUnit: string, toUnit: string, ca
     return convertTemperature(value, fromUnit, toUnit);
   }
 
-  const fromFactor = categoryData.units[fromUnit as keyof typeof categoryData.units]?.factor || 1;
-  const toFactor = categoryData.units[toUnit as keyof typeof categoryData.units]?.factor || 1;
+  const fromUnitData = categoryData.units[fromUnit];
+  const toUnitData = categoryData.units[toUnit];
+  
+  if (!fromUnitData || !toUnitData) return value;
+
+  const fromFactor = fromUnitData.factor;
+  const toFactor = toUnitData.factor;
 
   // Convert to base unit first, then to target unit
   const baseValue = value * fromFactor;
