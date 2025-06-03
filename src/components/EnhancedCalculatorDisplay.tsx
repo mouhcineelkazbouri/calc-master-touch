@@ -53,6 +53,28 @@ const EnhancedCalculatorDisplay = ({
 
   return (
     <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+      {/* Copy and Paste buttons positioned at top left */}
+      <div className="flex justify-start gap-2 mb-3">
+        <button
+          onClick={handleCopy}
+          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+          title="Copy result"
+        >
+          <Copy size={12} />
+          Copy
+        </button>
+        {onPaste && (
+          <button
+            onClick={handlePaste}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+            title="Paste number"
+          >
+            <Clipboard size={12} />
+            Paste
+          </button>
+        )}
+      </div>
+
       {/* Expression display with horizontal scrolling */}
       <div 
         ref={expressionRef}
@@ -72,32 +94,10 @@ const EnhancedCalculatorDisplay = ({
       {/* Main display */}
       <div 
         ref={displayRef}
-        className="text-right text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap mb-3"
+        className="text-right text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {display}
-      </div>
-      
-      {/* Copy and Paste buttons positioned below the display */}
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={handleCopy}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
-          title="Copy result"
-        >
-          <Copy size={12} />
-          Copy
-        </button>
-        {onPaste && (
-          <button
-            onClick={handlePaste}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
-            title="Paste number"
-          >
-            <Clipboard size={12} />
-            Paste
-          </button>
-        )}
       </div>
     </div>
   );
