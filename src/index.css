@@ -114,6 +114,50 @@
 
     --radius: 0.5rem;
   }
+
+  /* Font Size Classes */
+  .font-small {
+    font-size: 14px;
+  }
+
+  .font-small h1 { font-size: 1.5rem; }
+  .font-small h2 { font-size: 1.25rem; }
+  .font-small h3 { font-size: 1.125rem; }
+  .font-small .text-2xl { font-size: 1.5rem; }
+  .font-small .text-xl { font-size: 1.25rem; }
+  .font-small .text-lg { font-size: 1.125rem; }
+  .font-small .text-sm { font-size: 0.75rem; }
+  .font-small .text-xs { font-size: 0.625rem; }
+
+  .font-medium {
+    font-size: 16px;
+  }
+
+  .font-large {
+    font-size: 18px;
+  }
+
+  .font-large h1 { font-size: 2.5rem; }
+  .font-large h2 { font-size: 2rem; }
+  .font-large h3 { font-size: 1.75rem; }
+  .font-large .text-2xl { font-size: 2.5rem; }
+  .font-large .text-xl { font-size: 2rem; }
+  .font-large .text-lg { font-size: 1.75rem; }
+  .font-large .text-sm { font-size: 1rem; }
+  .font-large .text-xs { font-size: 0.875rem; }
+
+  .font-extra-large {
+    font-size: 20px;
+  }
+
+  .font-extra-large h1 { font-size: 3rem; }
+  .font-extra-large h2 { font-size: 2.5rem; }
+  .font-extra-large h3 { font-size: 2rem; }
+  .font-extra-large .text-2xl { font-size: 3rem; }
+  .font-extra-large .text-xl { font-size: 2.5rem; }
+  .font-extra-large .text-lg { font-size: 2rem; }
+  .font-extra-large .text-sm { font-size: 1.125rem; }
+  .font-extra-large .text-xs { font-size: 1rem; }
 }
 
 @layer base {

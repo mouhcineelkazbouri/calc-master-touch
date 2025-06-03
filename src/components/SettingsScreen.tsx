@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Monitor, Type, Vibrate } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
@@ -5,11 +6,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useFontSize } from '@/contexts/FontSizeContext';
 import ThemeCustomizer from './ThemeCustomizer';
 
 const SettingsScreen = () => {
   const { theme, setTheme } = useTheme();
-  const [fontSize, setFontSize] = useState('medium');
+  const { fontSize, setFontSize } = useFontSize();
   const [hapticFeedback, setHapticFeedback] = useState(true);
   const [showCustomizer, setShowCustomizer] = useState(false);
 
