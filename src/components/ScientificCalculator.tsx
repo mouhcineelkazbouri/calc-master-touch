@@ -16,6 +16,15 @@ const ScientificCalculator = () => {
     }
   };
 
+  const inputDecimal = () => {
+    if (waitingForNewValue) {
+      setDisplay('0.');
+      setWaitingForNewValue(false);
+    } else if (display.indexOf('.') === -1) {
+      setDisplay(display + '.');
+    }
+  };
+
   const inputOperation = (nextOperation: string) => {
     const inputValue = parseFloat(display);
 
@@ -41,7 +50,7 @@ const ScientificCalculator = () => {
       case '×':
         return firstValue * secondValue;
       case '÷':
-        return firstValue / secondValue;
+        return secondValue !== 0 ? firstValue / secondValue : 0;
       default:
         return secondValue;
     }
@@ -189,7 +198,7 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={() => inputOperation('−')} title="−" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
 
         <ScientificButton onPress={() => inputNumber('0')} title="0" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('.')} title="." size="h-14" />
+        <ScientificButton onPress={inputDecimal} title="." size="h-14" />
         <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-14" />
         <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
       </div>
