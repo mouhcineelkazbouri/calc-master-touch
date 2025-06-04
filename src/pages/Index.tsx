@@ -32,11 +32,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-md mx-auto bg-white shadow-xl min-h-screen relative">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-orange-50 px-6 py-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800 text-center">CalcMaster Pro</h1>
-        </div>
-
         {/* Screen Content with bottom padding to account for fixed navigation */}
         <div className="flex-1 pb-20">
           {renderScreen()}
