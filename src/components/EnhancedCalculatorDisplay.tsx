@@ -28,26 +28,39 @@ const EnhancedCalculatorDisplay = ({
   }, [expression]);
 
   const handleCopy = async () => {
+    console.log('Attempting to copy:', display);
     const success = await copyToClipboard(display);
     if (success) {
       toast.success('Copied to clipboard');
+      console.log('Copy successful');
     } else {
       toast.error('Failed to copy');
+      console.log('Copy failed');
     }
   };
 
   const handlePaste = async () => {
-    const pastedText = await pasteFromClipboard();
-    if (pastedText && onPaste) {
-      const sanitized = sanitizeNumberInput(pastedText);
-      if (sanitized) {
-        onPaste(sanitized);
-        toast.success('Number pasted');
+    console.log('Attempting to paste...');
+    try {
+      const pastedText = await pasteFromClipboard();
+      console.log('Pasted text:', pastedText);
+      
+      if (pastedText) {
+        const sanitized = sanitizeNumberInput(pastedText);
+        console.log('Sanitized text:', sanitized);
+        
+        if (sanitized && onPaste) {
+          onPaste(sanitized);
+          toast.success('Number pasted');
+        } else if (!sanitized) {
+          toast.error('Invalid number format');
+        }
       } else {
-        toast.error('Invalid number format');
+        toast.error('Nothing to paste or clipboard access denied');
       }
-    } else if (!pastedText) {
-      toast.error('Failed to paste');
+    } catch (error) {
+      console.error('Paste error:', error);
+      toast.error('Failed to paste - try copying a number first');
     }
   };
 
