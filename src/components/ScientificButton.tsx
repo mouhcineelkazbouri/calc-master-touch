@@ -12,12 +12,12 @@ interface ScientificButtonProps {
 const ScientificButton = ({ 
   onPress, 
   title, 
-  backgroundColor = 'bg-gray-100', 
+  backgroundColor = 'bg-white', 
   textColor = 'text-gray-800', 
   size = 'h-12' 
 }: ScientificButtonProps) => (
   <button
-    className={`${size} ${backgroundColor} ${textColor} rounded-xl font-medium text-sm shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 hover:brightness-105`}
+    className={`${size} ${backgroundColor} ${textColor} rounded-xl font-medium text-sm shadow-sm hover:shadow-md active:scale-95 transition-all duration-150 hover:brightness-105 border border-gray-200`}
     onClick={onPress}
   >
     {title}
