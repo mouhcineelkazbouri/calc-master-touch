@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { Copy, Clipboard, History } from 'lucide-react';
 import { copyToClipboard, pasteFromClipboard, sanitizeNumberInput } from '../utils/clipboardUtils';
@@ -78,35 +77,35 @@ const EnhancedCalculatorDisplay = ({
   };
 
   return (
-    <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+    <div className="bg-gray-50 rounded-2xl p-3 sm:p-4 mb-2 sm:mb-4">
       {/* Copy, Paste, and History buttons positioned at top left in one line */}
-      <div className="flex justify-start gap-2 mb-3">
+      <div className="flex justify-start gap-2 mb-2 sm:mb-3">
         <button
           onClick={handleCopy}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+          className="p-1.5 sm:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
           title={`Copy result: ${display}`}
         >
-          <Copy size={12} />
-          Copy
+          <Copy size={10} className="sm:w-3 sm:h-3" />
+          <span className="hidden sm:inline">Copy</span>
         </button>
         {onPaste && (
           <button
             onClick={handlePaste}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+            className="p-1.5 sm:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
             title="Paste number"
           >
-            <Clipboard size={12} />
-            Paste
+            <Clipboard size={10} className="sm:w-3 sm:h-3" />
+            <span className="hidden sm:inline">Paste</span>
           </button>
         )}
         {onShowHistory && (
           <button
             onClick={onShowHistory}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+            className="p-1.5 sm:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
             title="View history"
           >
-            <History size={12} />
-            History
+            <History size={10} className="sm:w-3 sm:h-3" />
+            <span className="hidden sm:inline">History</span>
           </button>
         )}
       </div>
@@ -114,7 +113,7 @@ const EnhancedCalculatorDisplay = ({
       {/* Expression display with horizontal scrolling */}
       <div 
         ref={expressionRef}
-        className="text-right text-xs text-gray-500 mb-2 min-h-[16px] overflow-x-auto scrollbar-hide whitespace-nowrap pb-1"
+        className="text-right text-xs text-gray-500 mb-1 sm:mb-2 min-h-[14px] sm:min-h-[16px] overflow-x-auto scrollbar-hide whitespace-nowrap pb-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {expression || '\u00A0'}
@@ -130,7 +129,7 @@ const EnhancedCalculatorDisplay = ({
       {/* Main display */}
       <div 
         ref={displayRef}
-        className="text-right text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap"
+        className="text-right text-xl sm:text-2xl font-light text-gray-800 overflow-x-auto scrollbar-hide whitespace-nowrap"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {display}

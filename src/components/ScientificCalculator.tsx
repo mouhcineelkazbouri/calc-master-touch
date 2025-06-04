@@ -200,63 +200,67 @@ const ScientificCalculator = () => {
   };
 
   return (
-    <div className="p-4">
-      <EnhancedCalculatorDisplay 
-        expression={expression} 
-        display={display} 
-        preview={preview}
-        onPaste={handlePaste}
-        onShowHistory={() => setShowHistory(true)}
-      />
-
-      {/* Scientific Functions Row 1 */}
-      <div className="grid grid-cols-5 gap-2 mb-3">
-        <ScientificButton onPress={() => scientificOperation('sin')} title="sin" backgroundColor="bg-orange-100" textColor="text-orange-700" />
-        <ScientificButton onPress={() => scientificOperation('cos')} title="cos" backgroundColor="bg-orange-100" textColor="text-orange-700" />
-        <ScientificButton onPress={() => scientificOperation('tan')} title="tan" backgroundColor="bg-orange-100" textColor="text-orange-700" />
-        <ScientificButton onPress={() => scientificOperation('ln')} title="ln" backgroundColor="bg-orange-100" textColor="text-orange-700" />
-        <ScientificButton onPress={() => scientificOperation('log')} title="log" backgroundColor="bg-orange-100" textColor="text-orange-700" />
+    <div className="p-2 sm:p-3 h-screen flex flex-col">
+      <div className="flex-shrink-0">
+        <EnhancedCalculatorDisplay 
+          expression={expression} 
+          display={display} 
+          preview={preview}
+          onPaste={handlePaste}
+          onShowHistory={() => setShowHistory(true)}
+        />
       </div>
 
-      {/* Scientific Functions Row 2 */}
-      <div className="grid grid-cols-5 gap-2 mb-3">
-        <ScientificButton onPress={() => scientificOperation('π')} title="π" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-        <ScientificButton onPress={() => scientificOperation('e')} title="e" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-        <ScientificButton onPress={() => scientificOperation('x²')} title="x²" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-        <ScientificButton onPress={() => scientificOperation('√')} title="√x" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-        <ScientificButton onPress={() => scientificOperation('1/x')} title="1/x" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-      </div>
+      <div className="flex-1 flex flex-col justify-between min-h-0">
+        {/* Scientific Functions Row 1 */}
+        <div className="grid grid-cols-5 gap-1 mb-1 sm:mb-2">
+          <ScientificButton onPress={() => scientificOperation('sin')} title="sin" backgroundColor="bg-orange-100" textColor="text-orange-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('cos')} title="cos" backgroundColor="bg-orange-100" textColor="text-orange-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('tan')} title="tan" backgroundColor="bg-orange-100" textColor="text-orange-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('ln')} title="ln" backgroundColor="bg-orange-100" textColor="text-orange-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('log')} title="log" backgroundColor="bg-orange-100" textColor="text-orange-700" size="h-8 sm:h-10" />
+        </div>
 
-      {/* Scientific Functions Row 3 */}
-      <div className="grid grid-cols-5 gap-2 mb-4">
-        <ScientificButton onPress={() => inputNumber('(')} title="(" backgroundColor="bg-gray-200" />
-        <ScientificButton onPress={() => inputNumber(')')} title=")" backgroundColor="bg-gray-200" />
-        <ScientificButton onPress={() => scientificOperation('x!')} title="x!" backgroundColor="bg-blue-100" textColor="text-blue-700" />
-        <ScientificButton onPress={clear} title="AC" backgroundColor="bg-red-100" textColor="text-red-700" />
-        <ScientificButton onPress={toggleSign} title="±" backgroundColor="bg-gray-200" />
-      </div>
+        {/* Scientific Functions Row 2 */}
+        <div className="grid grid-cols-5 gap-1 mb-1 sm:mb-2">
+          <ScientificButton onPress={() => scientificOperation('π')} title="π" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('e')} title="e" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('x²')} title="x²" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('√')} title="√x" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('1/x')} title="1/x" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+        </div>
 
-      {/* Number pad */}
-      <div className="grid grid-cols-4 gap-3">
-        <ScientificButton onPress={() => inputNumber('7')} title="7" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('8')} title="8" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('9')} title="9" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('÷')} title="÷" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+        {/* Scientific Functions Row 3 */}
+        <div className="grid grid-cols-5 gap-1 mb-2 sm:mb-3">
+          <ScientificButton onPress={() => inputNumber('(')} title="(" backgroundColor="bg-gray-200" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => inputNumber(')')} title=")" backgroundColor="bg-gray-200" size="h-8 sm:h-10" />
+          <ScientificButton onPress={() => scientificOperation('x!')} title="x!" backgroundColor="bg-blue-100" textColor="text-blue-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={clear} title="AC" backgroundColor="bg-red-100" textColor="text-red-700" size="h-8 sm:h-10" />
+          <ScientificButton onPress={toggleSign} title="±" backgroundColor="bg-gray-200" size="h-8 sm:h-10" />
+        </div>
 
-        <ScientificButton onPress={() => inputNumber('4')} title="4" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('5')} title="5" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('6')} title="6" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('×')} title="×" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+        {/* Number pad */}
+        <div className="grid grid-cols-4 gap-2">
+          <ScientificButton onPress={() => inputNumber('7')} title="7" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('8')} title="8" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('9')} title="9" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputOperation('÷')} title="÷" backgroundColor="bg-blue-500" textColor="text-white" size="h-10 sm:h-12" />
 
-        <ScientificButton onPress={() => inputNumber('1')} title="1" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('2')} title="2" size="h-14" />
-        <ScientificButton onPress={() => inputNumber('3')} title="3" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('−')} title="−" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+          <ScientificButton onPress={() => inputNumber('4')} title="4" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('5')} title="5" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('6')} title="6" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputOperation('×')} title="×" backgroundColor="bg-blue-500" textColor="text-white" size="h-10 sm:h-12" />
 
-        <ScientificButton onPress={() => inputNumber('0')} title="0" size="h-14" />
-        <ScientificButton onPress={inputDecimal} title="." size="h-14" />
-        <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-14" />
-        <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-14" />
+          <ScientificButton onPress={() => inputNumber('1')} title="1" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('2')} title="2" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputNumber('3')} title="3" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputOperation('−')} title="−" backgroundColor="bg-blue-500" textColor="text-white" size="h-10 sm:h-12" />
+
+          <ScientificButton onPress={() => inputNumber('0')} title="0" size="h-10 sm:h-12" />
+          <ScientificButton onPress={inputDecimal} title="." size="h-10 sm:h-12" />
+          <ScientificButton onPress={performCalculation} title="=" backgroundColor="bg-orange-500" textColor="text-white" size="h-10 sm:h-12" />
+          <ScientificButton onPress={() => inputOperation('+')} title="+" backgroundColor="bg-blue-500" textColor="text-white" size="h-10 sm:h-12" />
+        </div>
       </div>
 
       {showHistory && (
