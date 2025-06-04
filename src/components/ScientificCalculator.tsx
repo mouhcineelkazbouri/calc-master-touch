@@ -13,6 +13,7 @@ const ScientificCalculator = () => {
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
+  const [justCalculated, setJustCalculated] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -30,6 +31,17 @@ const ScientificCalculator = () => {
   }, []);
 
   const inputNumber = (num: string) => {
+    // If we just calculated and user types a number, start fresh like AC
+    if (justCalculated) {
+      setDisplay(num);
+      setExpression(num);
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForNewValue(false);
+      setJustCalculated(false);
+      return;
+    }
+
     if (waitingForNewValue) {
       setDisplay(num);
       setExpression(expression + num);
@@ -51,6 +63,17 @@ const ScientificCalculator = () => {
   };
 
   const inputDecimal = () => {
+    // If we just calculated and user types decimal, start fresh with "0."
+    if (justCalculated) {
+      setDisplay('0.');
+      setExpression('0.');
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForNewValue(false);
+      setJustCalculated(false);
+      return;
+    }
+
     if (waitingForNewValue) {
       setDisplay('0.');
       setExpression(expression + '0.');
@@ -62,6 +85,8 @@ const ScientificCalculator = () => {
   };
 
   const inputOperation = (nextOperation: string) => {
+    setJustCalculated(false); // Clear the flag when operation is pressed
+    
     const inputValue = parseFloat(display);
 
     if (previousValue === null) {
@@ -100,10 +125,13 @@ const ScientificCalculator = () => {
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
+      setJustCalculated(true); // Set flag when calculation is complete
     }
   };
 
   const scientificOperation = (op: string) => {
+    setJustCalculated(false); // Clear the flag when scientific operation is pressed
+    
     const value = parseFloat(display);
     const { result, operationText } = performScientificOperation(op, value);
     const formattedResult = formatLargeNumber(result);
@@ -113,6 +141,7 @@ const ScientificCalculator = () => {
     setExpression(fullExpression);
     addToHistory(operationText, formattedResult);
     setWaitingForNewValue(true);
+    setJustCalculated(true); // Set flag when scientific calculation is complete
   };
 
   const clear = () => {
@@ -121,9 +150,12 @@ const ScientificCalculator = () => {
     setPreviousValue(null);
     setOperation(null);
     setWaitingForNewValue(false);
+    setJustCalculated(false);
   };
 
   const toggleSign = () => {
+    setJustCalculated(false); // Clear the flag when modifying current value
+    
     const newDisplay = display.charAt(0) === '-' ? display.slice(1) : '-' + display;
     setDisplay(newDisplay);
     if (expression) {
@@ -169,22 +201,12 @@ const ScientificCalculator = () => {
 
   return (
     <div className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Scientific Calculator</h2>
-        <button
-          onClick={() => setShowHistory(true)}
-          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-          title="View history"
-        >
-          <History size={20} />
-        </button>
-      </div>
-      
       <EnhancedCalculatorDisplay 
         expression={expression} 
         display={display} 
         preview={preview}
         onPaste={handlePaste}
+        onShowHistory={() => setShowHistory(true)}
       />
 
       {/* Scientific Functions Row 1 */}
@@ -196,6 +218,7 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={() => scientificOperation('log')} title="log" backgroundColor="bg-orange-100" textColor="text-orange-700" />
       </div>
 
+      {/* Scientific Functions Row 2 */}
       <div className="grid grid-cols-5 gap-2 mb-3">
         <ScientificButton onPress={() => scientificOperation('π')} title="π" backgroundColor="bg-blue-100" textColor="text-blue-700" />
         <ScientificButton onPress={() => scientificOperation('e')} title="e" backgroundColor="bg-blue-100" textColor="text-blue-700" />
@@ -204,6 +227,7 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={() => scientificOperation('1/x')} title="1/x" backgroundColor="bg-blue-100" textColor="text-blue-700" />
       </div>
 
+      {/* Scientific Functions Row 3 */}
       <div className="grid grid-cols-5 gap-2 mb-4">
         <ScientificButton onPress={() => inputNumber('(')} title="(" backgroundColor="bg-gray-200" />
         <ScientificButton onPress={() => inputNumber(')')} title=")" backgroundColor="bg-gray-200" />
@@ -212,6 +236,7 @@ const ScientificCalculator = () => {
         <ScientificButton onPress={toggleSign} title="±" backgroundColor="bg-gray-200" />
       </div>
 
+      {/* Number pad */}
       <div className="grid grid-cols-4 gap-3">
         <ScientificButton onPress={() => inputNumber('7')} title="7" size="h-14" />
         <ScientificButton onPress={() => inputNumber('8')} title="8" size="h-14" />
