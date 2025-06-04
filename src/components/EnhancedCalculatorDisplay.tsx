@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
-import { Copy, Clipboard } from 'lucide-react';
+import { Copy, Clipboard, History } from 'lucide-react';
 import { copyToClipboard, pasteFromClipboard, sanitizeNumberInput } from '../utils/clipboardUtils';
 import { toast } from 'sonner';
 
@@ -9,13 +9,15 @@ interface EnhancedCalculatorDisplayProps {
   display: string;
   preview?: string;
   onPaste?: (value: string) => void;
+  onShowHistory?: () => void;
 }
 
 const EnhancedCalculatorDisplay = ({ 
   expression, 
   display, 
   preview,
-  onPaste 
+  onPaste,
+  onShowHistory
 }: EnhancedCalculatorDisplayProps) => {
   const expressionRef = useRef<HTMLDivElement>(null);
   const displayRef = useRef<HTMLDivElement>(null);
@@ -77,7 +79,7 @@ const EnhancedCalculatorDisplay = ({
 
   return (
     <div className="bg-gray-50 rounded-2xl p-4 mb-4">
-      {/* Copy and Paste buttons positioned at top left */}
+      {/* Copy, Paste, and History buttons positioned at top left in one line */}
       <div className="flex justify-start gap-2 mb-3">
         <button
           onClick={handleCopy}
@@ -95,6 +97,16 @@ const EnhancedCalculatorDisplay = ({
           >
             <Clipboard size={12} />
             Paste
+          </button>
+        )}
+        {onShowHistory && (
+          <button
+            onClick={onShowHistory}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
+            title="View history"
+          >
+            <History size={12} />
+            History
           </button>
         )}
       </div>

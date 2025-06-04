@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { History } from 'lucide-react';
 import EnhancedCalculatorDisplay from './EnhancedCalculatorDisplay';
@@ -187,22 +186,12 @@ const BasicCalculator = () => {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Basic Calculator</h2>
-        <button
-          onClick={() => setShowHistory(true)}
-          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-          title="View history"
-        >
-          <History size={20} />
-        </button>
-      </div>
-      
       <EnhancedCalculatorDisplay 
         expression={expression} 
         display={display} 
         preview={preview}
         onPaste={handlePaste}
+        onShowHistory={() => setShowHistory(true)}
       />
 
       <div className="grid grid-cols-4 gap-3">
