@@ -28,14 +28,25 @@ const EnhancedCalculatorDisplay = ({
   }, [expression]);
 
   const handleCopy = async () => {
-    console.log('Attempting to copy:', display);
-    const success = await copyToClipboard(display);
-    if (success) {
-      toast.success('Copied to clipboard');
-      console.log('Copy successful');
-    } else {
-      toast.error('Failed to copy');
-      console.log('Copy failed');
+    console.log('Attempting to copy result:', display);
+    
+    if (!display || display === '0') {
+      toast.error('No result to copy');
+      return;
+    }
+
+    try {
+      const success = await copyToClipboard(display);
+      if (success) {
+        toast.success(`Copied "${display}" to clipboard`);
+        console.log('Copy operation completed successfully');
+      } else {
+        toast.error('Copy failed - please try manually selecting and copying');
+        console.log('Copy operation failed');
+      }
+    } catch (error) {
+      console.error('Copy error:', error);
+      toast.error('Copy failed due to browser restrictions');
     }
   };
 
@@ -51,16 +62,16 @@ const EnhancedCalculatorDisplay = ({
         
         if (sanitized && onPaste) {
           onPaste(sanitized);
-          toast.success('Number pasted');
+          toast.success(`Pasted number: ${sanitized}`);
         } else if (!sanitized) {
-          toast.error('Invalid number format');
+          toast.error(`"${pastedText}" is not a valid number`);
         }
       } else {
         toast.error('Nothing to paste or clipboard access denied');
       }
     } catch (error) {
       console.error('Paste error:', error);
-      toast.error('Failed to paste - try copying a number first');
+      toast.error('Paste failed - try copying a number first');
     }
   };
 
@@ -71,7 +82,7 @@ const EnhancedCalculatorDisplay = ({
         <button
           onClick={handleCopy}
           className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1 text-xs"
-          title="Copy result"
+          title={`Copy result: ${display}`}
         >
           <Copy size={12} />
           Copy
