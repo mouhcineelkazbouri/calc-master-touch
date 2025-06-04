@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { History } from 'lucide-react';
 import EnhancedCalculatorDisplay from './EnhancedCalculatorDisplay';
@@ -11,6 +12,7 @@ const BasicCalculator = () => {
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
+  const [justCalculated, setJustCalculated] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -28,6 +30,17 @@ const BasicCalculator = () => {
   }, []);
 
   const handleNumber = (num: string) => {
+    // If we just calculated and user types a number, start fresh like AC
+    if (justCalculated) {
+      setDisplay(num);
+      setExpression(num);
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForNewValue(false);
+      setJustCalculated(false);
+      return;
+    }
+
     if (waitingForNewValue) {
       setDisplay(num);
       setExpression(expression + num);
@@ -49,6 +62,8 @@ const BasicCalculator = () => {
   };
 
   const handleOperation = (nextOperation: string) => {
+    setJustCalculated(false); // Clear the flag when operation is pressed
+    
     const inputValue = parseFloat(display);
 
     if (previousValue === null) {
@@ -102,6 +117,7 @@ const BasicCalculator = () => {
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
+      setJustCalculated(true); // Set flag when calculation is complete
     }
   };
 
@@ -111,9 +127,12 @@ const BasicCalculator = () => {
     setPreviousValue(null);
     setOperation(null);
     setWaitingForNewValue(false);
+    setJustCalculated(false);
   };
 
   const toggleSign = () => {
+    setJustCalculated(false); // Clear the flag when modifying current value
+    
     const newDisplay = display.charAt(0) === '-' ? display.slice(1) : '-' + display;
     setDisplay(newDisplay);
     if (expression) {
@@ -131,6 +150,8 @@ const BasicCalculator = () => {
   };
 
   const handlePercent = () => {
+    setJustCalculated(false); // Clear the flag when modifying current value
+    
     const value = parseFloat(display);
     const newValue = value / 100;
     const formattedValue = formatLargeNumber(newValue);
@@ -147,6 +168,17 @@ const BasicCalculator = () => {
   };
 
   const handleDecimal = () => {
+    // If we just calculated and user types decimal, start fresh with "0."
+    if (justCalculated) {
+      setDisplay('0.');
+      setExpression('0.');
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForNewValue(false);
+      setJustCalculated(false);
+      return;
+    }
+
     if (waitingForNewValue) {
       setDisplay('0.');
       setExpression(expression + '0.');
