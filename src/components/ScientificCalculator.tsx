@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import { History } from 'lucide-react';
 import { basicCalculate, performScientificOperation } from '../utils/calculatorUtils';
-import { getRealtimePreview, formatLargeNumber, parseComplexNumber } from '../utils/enhancedCalculatorUtils';
+import { getRealtimePreview, formatLargeNumber, parseComplexNumber, isValidExpression } from '../utils/enhancedCalculatorUtils';
 import ScientificButton from './ScientificButton';
 import EnhancedCalculatorDisplay from './EnhancedCalculatorDisplay';
 import CalculatorHistory, { HistoryItem } from './CalculatorHistory';
@@ -17,6 +17,8 @@ const ScientificCalculator = () => {
   const [justCalculated, setJustCalculated] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [waitingForSecondOperand, setWaitingForSecondOperand] = useState(false);
+  const [twoOperandFunction, setTwoOperandFunction] = useState<string | null>(null);
 
   // Get real-time preview
   const preview = getRealtimePreview(expression);
@@ -40,6 +42,8 @@ const ScientificCalculator = () => {
       setOperation(null);
       setWaitingForNewValue(false);
       setJustCalculated(false);
+      setWaitingForSecondOperand(false);
+      setTwoOperandFunction(null);
       return;
     }
 
@@ -52,7 +56,7 @@ const ScientificCalculator = () => {
       setDisplay(newDisplay);
       if (expression === '') {
         setExpression(num);
-      } else if (!waitingForNewValue) {
+      } else {
         const lastChar = expression[expression.length - 1];
         if (!isNaN(Number(lastChar)) || lastChar === '.') {
           setExpression(expression + num);
@@ -72,6 +76,8 @@ const ScientificCalculator = () => {
       setOperation(null);
       setWaitingForNewValue(false);
       setJustCalculated(false);
+      setWaitingForSecondOperand(false);
+      setTwoOperandFunction(null);
       return;
     }
 
@@ -85,8 +91,31 @@ const ScientificCalculator = () => {
     }
   };
 
+  const inputParenthesis = (paren: string) => {
+    setJustCalculated(false);
+    
+    if (paren === '(') {
+      if (waitingForNewValue || display === '0' || expression === '') {
+        setExpression(expression + '(');
+        setDisplay('(');
+      } else {
+        setExpression(expression + '×(');
+        setDisplay('(');
+      }
+      setWaitingForNewValue(true);
+    } else { // closing parenthesis
+      if (!waitingForNewValue && expression) {
+        setExpression(expression + ')');
+        setDisplay(')');
+        setWaitingForNewValue(false);
+      }
+    }
+  };
+
   const inputOperation = (nextOperation: string) => {
-    setJustCalculated(false); // Clear the flag when operation is pressed
+    setJustCalculated(false);
+    setWaitingForSecondOperand(false);
+    setTwoOperandFunction(null);
     
     const inputValue = parseFloat(display);
 
@@ -113,6 +142,25 @@ const ScientificCalculator = () => {
   };
 
   const performCalculation = () => {
+    // Handle two-operand functions first
+    if (waitingForSecondOperand && twoOperandFunction && previousValue !== null) {
+      const secondValue = parseFloat(display);
+      const { result, operationText } = performScientificOperation(twoOperandFunction, previousValue, secondValue);
+      const formattedResult = formatLargeNumber(result);
+      
+      setDisplay(formattedResult);
+      setExpression(operationText + ' = ' + formattedResult);
+      addToHistory(operationText, formattedResult);
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForNewValue(true);
+      setJustCalculated(true);
+      setWaitingForSecondOperand(false);
+      setTwoOperandFunction(null);
+      return;
+    }
+
+    // Handle regular operations
     const inputValue = parseFloat(display);
 
     if (previousValue !== null && operation) {
@@ -126,13 +174,57 @@ const ScientificCalculator = () => {
       setPreviousValue(null);
       setOperation(null);
       setWaitingForNewValue(true);
-      setJustCalculated(true); // Set flag when calculation is complete
+      setJustCalculated(true);
+    } else {
+      // Try to evaluate the current expression if it's valid
+      if (isValidExpression(expression)) {
+        const result = getRealtimePreview(expression);
+        if (result && result !== display) {
+          const fullExpression = expression + ' = ' + result;
+          setDisplay(result);
+          setExpression(fullExpression);
+          addToHistory(expression, result);
+          setJustCalculated(true);
+          setWaitingForNewValue(true);
+        }
+      }
     }
   };
 
   const scientificOperation = (op: string) => {
-    setJustCalculated(false); // Clear the flag when scientific operation is pressed
+    setJustCalculated(false);
     
+    // Handle constants
+    if (['π', 'e', 'φ', 'rand'].includes(op)) {
+      const { result, operationText } = performScientificOperation(op, 0);
+      const formattedResult = formatLargeNumber(result);
+      
+      if (waitingForNewValue || display === '0') {
+        setDisplay(formattedResult);
+        setExpression(expression + formattedResult);
+      } else {
+        setDisplay(formattedResult);
+        setExpression(expression + '×' + formattedResult);
+      }
+      setWaitingForNewValue(false);
+      return;
+    }
+
+    // Handle two-operand functions
+    if (['x^y', 'ⁿ√', 'mod'].includes(op)) {
+      const value = parseFloat(display);
+      setPreviousValue(value);
+      setTwoOperandFunction(op);
+      setWaitingForSecondOperand(true);
+      setWaitingForNewValue(true);
+      
+      const operatorSymbol = op === 'x^y' ? '^' : op === 'ⁿ√' ? '√' : 'mod';
+      setExpression(expression + ' ' + operatorSymbol + ' ');
+      toast.info(`Enter second operand for ${op}`);
+      return;
+    }
+
+    // Handle single-operand functions
     const value = parseFloat(display);
     const { result, operationText } = performScientificOperation(op, value);
     const formattedResult = formatLargeNumber(result);
@@ -142,7 +234,7 @@ const ScientificCalculator = () => {
     setExpression(fullExpression);
     addToHistory(operationText, formattedResult);
     setWaitingForNewValue(true);
-    setJustCalculated(true); // Set flag when scientific calculation is complete
+    setJustCalculated(true);
   };
 
   const clear = () => {
@@ -152,10 +244,12 @@ const ScientificCalculator = () => {
     setOperation(null);
     setWaitingForNewValue(false);
     setJustCalculated(false);
+    setWaitingForSecondOperand(false);
+    setTwoOperandFunction(null);
   };
 
   const toggleSign = () => {
-    setJustCalculated(false); // Clear the flag when modifying current value
+    setJustCalculated(false);
     
     const newDisplay = display.charAt(0) === '-' ? display.slice(1) : '-' + display;
     setDisplay(newDisplay);
@@ -265,8 +359,8 @@ const ScientificCalculator = () => {
 
         {/* Control Row */}
         <div className="grid grid-cols-6 gap-2">
-          <ScientificButton onPress={() => inputNumber('(')} title="(" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />
-          <ScientificButton onPress={() => inputNumber(')')} title=")" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />
+          <ScientificButton onPress={() => inputParenthesis('(')} title="(" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />
+          <ScientificButton onPress={() => inputParenthesis(')')} title=")" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />
           <ScientificButton onPress={() => scientificOperation('mod')} title="mod" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />
           <ScientificButton onPress={clear} title="AC" backgroundColor="bg-red-100" textColor="text-red-700" size="h-9" />
           <ScientificButton onPress={toggleSign} title="±" backgroundColor="bg-gray-200" textColor="text-gray-700" size="h-9" />

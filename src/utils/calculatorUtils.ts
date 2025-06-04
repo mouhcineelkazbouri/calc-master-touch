@@ -8,6 +8,12 @@ export const basicCalculate = (firstValue: number, secondValue: number, operatio
       return firstValue * secondValue;
     case '÷':
       return secondValue !== 0 ? firstValue / secondValue : 0;
+    case 'x^y':
+      return Math.pow(firstValue, secondValue);
+    case 'ⁿ√':
+      return Math.pow(firstValue, 1 / secondValue);
+    case 'mod':
+      return firstValue % secondValue;
     default:
       return secondValue;
   }
@@ -23,7 +29,7 @@ export const factorial = (n: number): number => {
   return result;
 };
 
-export const performScientificOperation = (op: string, value: number) => {
+export const performScientificOperation = (op: string, value: number, secondValue?: number) => {
   let result = 0;
   let operationText = '';
 
@@ -44,12 +50,22 @@ export const performScientificOperation = (op: string, value: number) => {
     
     // Inverse trigonometric functions (returns degrees)
     case 'asin':
-      result = (Math.asin(value) * 180) / Math.PI;
-      operationText = `sin⁻¹(${value})`;
+      if (value < -1 || value > 1) {
+        result = NaN;
+        operationText = `sin⁻¹(${value}) - Domain Error`;
+      } else {
+        result = (Math.asin(value) * 180) / Math.PI;
+        operationText = `sin⁻¹(${value})`;
+      }
       break;
     case 'acos':
-      result = (Math.acos(value) * 180) / Math.PI;
-      operationText = `cos⁻¹(${value})`;
+      if (value < -1 || value > 1) {
+        result = NaN;
+        operationText = `cos⁻¹(${value}) - Domain Error`;
+      } else {
+        result = (Math.acos(value) * 180) / Math.PI;
+        operationText = `cos⁻¹(${value})`;
+      }
       break;
     case 'atan':
       result = (Math.atan(value) * 180) / Math.PI;
@@ -76,26 +92,51 @@ export const performScientificOperation = (op: string, value: number) => {
       operationText = `sinh⁻¹(${value})`;
       break;
     case 'acosh':
-      result = Math.acosh(value);
-      operationText = `cosh⁻¹(${value})`;
+      if (value < 1) {
+        result = NaN;
+        operationText = `cosh⁻¹(${value}) - Domain Error`;
+      } else {
+        result = Math.acosh(value);
+        operationText = `cosh⁻¹(${value})`;
+      }
       break;
     case 'atanh':
-      result = Math.atanh(value);
-      operationText = `tanh⁻¹(${value})`;
+      if (value <= -1 || value >= 1) {
+        result = NaN;
+        operationText = `tanh⁻¹(${value}) - Domain Error`;
+      } else {
+        result = Math.atanh(value);
+        operationText = `tanh⁻¹(${value})`;
+      }
       break;
     
     // Logarithmic functions
     case 'ln':
-      result = Math.log(value);
-      operationText = `ln(${value})`;
+      if (value <= 0) {
+        result = NaN;
+        operationText = `ln(${value}) - Domain Error`;
+      } else {
+        result = Math.log(value);
+        operationText = `ln(${value})`;
+      }
       break;
     case 'log':
-      result = Math.log10(value);
-      operationText = `log(${value})`;
+      if (value <= 0) {
+        result = NaN;
+        operationText = `log(${value}) - Domain Error`;
+      } else {
+        result = Math.log10(value);
+        operationText = `log(${value})`;
+      }
       break;
     case 'log2':
-      result = Math.log2(value);
-      operationText = `log₂(${value})`;
+      if (value <= 0) {
+        result = NaN;
+        operationText = `log₂(${value}) - Domain Error`;
+      } else {
+        result = Math.log2(value);
+        operationText = `log₂(${value})`;
+      }
       break;
     
     // Exponential functions
@@ -122,43 +163,75 @@ export const performScientificOperation = (op: string, value: number) => {
       operationText = `${value}³`;
       break;
     case 'x^y':
-      // This would need special handling for two operands
-      result = Math.pow(value, 2); // Default to square for now
-      operationText = `${value}^2`;
+      if (secondValue !== undefined) {
+        result = Math.pow(value, secondValue);
+        operationText = `${value}^${secondValue}`;
+      } else {
+        result = Math.pow(value, 2); // Default to square
+        operationText = `${value}²`;
+      }
       break;
     
     // Root functions
     case '√':
-      result = Math.sqrt(value);
-      operationText = `√(${value})`;
+      if (value < 0) {
+        result = NaN;
+        operationText = `√(${value}) - Domain Error`;
+      } else {
+        result = Math.sqrt(value);
+        operationText = `√(${value})`;
+      }
       break;
     case '∛':
       result = Math.cbrt(value);
       operationText = `∛(${value})`;
       break;
     case 'ⁿ√':
-      // This would need special handling for two operands
-      result = Math.sqrt(value); // Default to square root for now
-      operationText = `√(${value})`;
+      if (secondValue !== undefined) {
+        if (secondValue === 0) {
+          result = NaN;
+          operationText = `${secondValue}√(${value}) - Division by Zero`;
+        } else {
+          result = Math.pow(value, 1 / secondValue);
+          operationText = `${secondValue}√(${value})`;
+        }
+      } else {
+        result = Math.sqrt(value); // Default to square root
+        operationText = `√(${value})`;
+      }
       break;
     
     // Other functions
     case '1/x':
-      result = 1 / value;
-      operationText = `1/(${value})`;
+      if (value === 0) {
+        result = Infinity;
+        operationText = `1/(${value}) - Division by Zero`;
+      } else {
+        result = 1 / value;
+        operationText = `1/(${value})`;
+      }
       break;
     case 'x!':
-      result = factorial(Math.floor(value));
-      operationText = `${Math.floor(value)}!`;
+      result = factorial(Math.floor(Math.abs(value)));
+      operationText = `${Math.floor(Math.abs(value))}!`;
       break;
     case '|x|':
       result = Math.abs(value);
       operationText = `|${value}|`;
       break;
     case 'mod':
-      // This would need special handling for two operands
-      result = value % 2; // Default modulo 2 for now
-      operationText = `${value} mod 2`;
+      if (secondValue !== undefined) {
+        if (secondValue === 0) {
+          result = NaN;
+          operationText = `${value} mod ${secondValue} - Division by Zero`;
+        } else {
+          result = value % secondValue;
+          operationText = `${value} mod ${secondValue}`;
+        }
+      } else {
+        result = value % 2; // Default modulo 2
+        operationText = `${value} mod 2`;
+      }
       break;
     
     // Constants
@@ -184,4 +257,37 @@ export const performScientificOperation = (op: string, value: number) => {
   }
 
   return { result, operationText };
+};
+
+// Enhanced expression evaluation with proper parentheses support
+export const evaluateExpressionSafely = (expression: string): number | null => {
+  try {
+    // Clean the expression
+    let cleaned = expression
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-')
+      .replace(/\s+/g, ''); // Remove spaces
+
+    // Validate the expression - only allow safe characters
+    if (!/^[\d+\-*/().\s]+$/.test(cleaned)) {
+      return null;
+    }
+
+    // Check for balanced parentheses
+    let parenCount = 0;
+    for (let char of cleaned) {
+      if (char === '(') parenCount++;
+      if (char === ')') parenCount--;
+      if (parenCount < 0) return null; // More closing than opening
+    }
+    if (parenCount !== 0) return null; // Unbalanced parentheses
+
+    // Use Function constructor for safe evaluation
+    const result = Function(`"use strict"; return (${cleaned})`)();
+    
+    return typeof result === 'number' && isFinite(result) ? result : null;
+  } catch {
+    return null;
+  }
 };
